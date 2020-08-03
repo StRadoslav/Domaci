@@ -1,19 +1,21 @@
-const faker = require("faker");
+//const faker = require("faker");
 import { LOGIN } from "../fixtures/constants";
 import { authPage } from "../page_objects/page.login";
 import { randomEmail } from "../utils/index";
 
-var randomMail = faker.internet.email();
-let pass = faker.internet.password(); // Rowan Nikolaus
+//var randomMail = faker.internet.email();
+//let pass = faker.internet.password(); // Rowan Nikolaus
 
 /// <reference types  = "cypress" />
 
+
+
 beforeEach(() => {
-  cy.visit("/login");
-  // cy.server()
-  // cy.route('https://gallery-api.vivifyideas.com/api/galleries?page=1&term=')
-  //cy.wait('@https://gallery-api.vivifyideas.com/api/galleries?page=1&term=')
-});
+  cy.visit('/login')
+  cy.server()
+  cy.route('GET',Cypress.env('apiUrl') + '/galleries?page=1&term=','fixture:all.json').as('stubing')
+})
+
 
 describe("Login module", () => {
   it("GA-19 : Login page layout ", () => {
@@ -24,6 +26,16 @@ describe("Login module", () => {
     cy.get(".btn").should("be.visible");
     //cy.wait(5000);
     //cy.get('.nav-link').contains('Logout').should('be.visible');
+  });
+
+
+
+  it.only("Wait for request to load", () => {
+    cy.request('POST',Cypress.env('apiUrl')+ '/auth/login',{"email":"boba.radoslav@gmail.com","password":"12345678"})
+    
+    cy.visit("/");
+    cy.wait('@stubing')
+   
   });
 
   it("GA-28 : Login - valid data", () => {
@@ -68,7 +80,7 @@ describe("Login module", () => {
     });
   });
 
-  it.only("GA-25:Login - invalid data -EMPTY EMAIL", () => {
+  it("GA-25:Login - invalid data -EMPTY EMAIL", () => {
     //cy.visit("/");
     cy.get(".nav-link").contains("Login").click();
 
