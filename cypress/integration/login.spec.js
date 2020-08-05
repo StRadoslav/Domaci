@@ -14,6 +14,7 @@ beforeEach(() => {
   cy.visit('/login')
   cy.server()
   cy.route('GET',Cypress.env('apiUrl') + '/galleries?page=1&term=','fixture:all.json').as('stubing')
+  
 })
 
 
